@@ -356,7 +356,13 @@ The project is currently versioned at `0.2.0`; create future GitHub releases fro
 
 `geoip-lite` ships a GeoLite2 snapshot that is frozen when the npm package is published, while MaxMind reassigns address ranges twice a week. An instance running on the bundled copy therefore reports a slowly growing share of clicks as `ZZ` / Unknown, because newly allocated IPs are not in its database yet.
 
-Set `MAXMIND_LICENSE_KEY` to a free [GeoLite2 key](https://www.maxmind.com/en/geolite2/signup) and zer0 refreshes the database itself: once at startup, then every seven days, reloading the data in place without a restart. The update runs in a child process, so redirects are unaffected, and MaxMind's checksum is compared first, so an already-current database costs one small request. With the key unset, nothing is downloaded and the bundled snapshot is used as-is.
+`MAXMIND_LICENSE_KEY` is optional. Set it and zer0 refreshes the database itself: once at startup, then every seven days, reloading the data in place without a restart. The update runs in a child process, so redirects are unaffected, and MaxMind's checksum is compared first, so an already-current database costs one small request. Leave it unset and nothing is downloaded — the bundled snapshot is used as-is, and everything else in zer0 works the same either way.
+
+To enable it:
+
+1. Create a free MaxMind account at [maxmind.com/en/geolite2/signup](https://www.maxmind.com/en/geolite2/signup).
+2. Under **My License Keys**, generate a new license key (no credit card required).
+3. Set `MAXMIND_LICENSE_KEY` to that key in `.env` (or your deployment's environment) and restart zer0.
 
 Under Docker Compose the refreshed database lives in the `geoip-data` volume, seeded from the image on first run, so updates survive container restarts and image rebuilds.
 
